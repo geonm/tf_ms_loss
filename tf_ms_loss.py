@@ -39,8 +39,8 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
     neg_exp = tf.exp(beta * (neg_mat - lamb))
     neg_exp = tf.where(mask_neg > 0.0, neg_exp, tf.zeros_like(neg_exp))
 
-    pos_term = tf.log(1.0 + tf.reduce_sum(pos_exp)) / alpha
-    neg_term = tf.log(1.0 + tf.reduce_sum(neg_exp)) / beta
+    pos_term = tf.log(1.0 + tf.reduce_sum(pos_exp, axis=1)) / alpha
+    neg_term = tf.log(1.0 + tf.reduce_sum(neg_exp, axis=1)) / beta
 
     loss = tf.reduce_mean(pos_term + neg_term)
 
