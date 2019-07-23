@@ -27,9 +27,13 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
     neg_mat = tf.multiply(sim_mat, mask_neg)
 
     if ms_mining:
-        max_val = tf.reduce_max(neg_mat)
-        tmp_max_val = tf.reduce_max(pos_mat)
-        min_val = tf.reduce_min(tf.multiply(sim_mat - tmp_max_val, mask_pos)) + tmp_max_val
+        max_val = tf.reduce_max(neg_mat, axis=1, keepdims=True)
+        tmp_max_val = tf.reduce_max(pos_mat, axis=1, keepdims=True)
+        min_val = tf.reduce_min(tf.multiply(sim_mat - tmp_max_val, mask_pos), axis=1, keepdims=True) + tmp_max_val
+
+        max_val = tf.tile(max_val, [1, batch_size])
+        min_val = tf.tile(min_val, [1, batch_size])
+
         pos_mat = tf.where(pos_mat < max_val + eps, pos_mat, tf.zeros_like(pos_mat))
         neg_mat = tf.where(neg_mat > min_val - eps, neg_mat, tf.zeros_like(neg_mat))
 
