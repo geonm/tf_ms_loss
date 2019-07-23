@@ -34,8 +34,8 @@ def ms_loss(labels, embeddings, alpha=2.0, beta=50.0, lamb=1.0, eps=0.1, ms_mini
         max_val = tf.tile(max_val, [1, batch_size])
         min_val = tf.tile(min_val, [1, batch_size])
 
-        pos_mat = tf.where(pos_mat < max_val + eps, pos_mat, tf.zeros_like(pos_mat))
-        neg_mat = tf.where(neg_mat > min_val - eps, neg_mat, tf.zeros_like(neg_mat))
+        mask_pos = tf.where(pos_mat < max_val + eps, mask_pos, tf.zeros_like(mask_pos))
+        mask_neg = tf.where(neg_mat > min_val - eps, mask_neg, tf.zeros_like(mask_neg))
 
     pos_exp = tf.exp(-alpha * (pos_mat - lamb))
     pos_exp = tf.where(mask_pos > 0.0, pos_exp, tf.zeros_like(pos_exp))
